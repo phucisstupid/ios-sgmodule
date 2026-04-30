@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fs = require("fs");
 const path = require("path");
+const { execFileSync } = require("child_process");
 
 const DEFAULT_SHADOWROCKET_OUT = "shadowrocket.conf";
 const DEFAULT_SURGE_OUT = "module.sgmodule";
@@ -49,9 +50,28 @@ async function readSource(args) {
     throw new Error("Provide --url <https://...> or --input <file>");
   }
 
-  const response = await fetch(args.sourceUrl);
+  const response = await fetch(args.sourceUrl, {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (compatible; ios-sgmodule/1.0; +https://github.com/phucisstupid/ios-sgmodule)",
+      "Accept": "text/yaml,text/plain,application/yaml,application/x-yaml,*/*",
+      "Accept-Language": "en-US,en;q=0.9",
+    },
+  });
   if (!response.ok) {
-    throw new Error(`Failed to fetch ${args.sourceUrl}: ${response.status} ${response.statusText}`);
+    try {
+      return execFileSync(
+        "curl",
+        [
+          "-fsSL",
+          "-A",
+          "Mozilla/5.0 (compatible; ios-sgmodule/1.0; +https://github.com/phucisstupid/ios-sgmodule)",
+          args.sourceUrl,
+        ],
+        { encoding: "utf8", maxBuffer: 20 * 1024 * 1024 }
+      );
+    } catch (error) {
+      throw new Error(`Failed to fetch ${args.sourceUrl}: ${response.status} ${response.statusText}`);
+    }
   }
   return response.text();
 }
