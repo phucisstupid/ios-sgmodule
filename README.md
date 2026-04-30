@@ -40,6 +40,11 @@ Generated files:
 - `shadowrocket.conf`: import into Shadowrocket.
 - `module.sgmodule`: import into Surge.
 
+Raw links:
+
+- Shadowrocket: `https://raw.githubusercontent.com/phucisstupid/ios-sgmodule/refs/heads/main/shadowrocket.conf`
+- Surge: `https://raw.githubusercontent.com/phucisstupid/ios-sgmodule/refs/heads/main/module.sgmodule`
+
 ## GitHub Action
 
 The included workflow can be run manually from the Actions tab.
