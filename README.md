@@ -5,13 +5,16 @@ Convert the AppTesters Egern config into iOS proxy-client formats:
 - Shadowrocket config
 - Surge `.sgmodule`
 
-Default source:
+Shadowrocket config:
 
 ```text
-https://apptesters.org/egern.yaml
+https://raw.githubusercontent.com/phucisstupid/ios-sgmodule/refs/heads/main/shadowrocket.conf
 ```
+Surge config:
 
-The converter is dependency-free and runs with Node.js 20 or newer. It reads the Egern YAML, converts script rules, header rewrites, and MITM hostnames, then writes Shadowrocket and Surge-compatible output files.
+```text
+https://raw.githubusercontent.com/phucisstupid/ios-sgmodule/refs/heads/main/module.sgmodule
+```
 
 ## Usage
 
@@ -39,31 +42,6 @@ Generated files:
 
 - `shadowrocket.conf`: import into Shadowrocket.
 - `module.sgmodule`: import into Surge.
-
-Raw links:
-
-- Shadowrocket: `https://raw.githubusercontent.com/phucisstupid/ios-sgmodule/refs/heads/main/shadowrocket.conf`
-- Surge: `https://raw.githubusercontent.com/phucisstupid/ios-sgmodule/refs/heads/main/module.sgmodule`
-
-## GitHub Action
-
-The included workflow can be run manually from the Actions tab.
-
-Inputs:
-
-- `source_url`: Egern YAML URL to convert. Defaults to `https://apptesters.org/egern.yaml`.
-- `module_name`: display name used in generated config metadata. Defaults to `AppTesters`.
-
-The workflow writes the generated Shadowrocket and Surge files to the project root, commits them back to `main`, and uploads the same files as an artifact named `converted-egern-configs`.
-
-To use it:
-
-1. Open the repository on GitHub.
-2. Go to `Actions`.
-3. Select `Convert Egern Config`.
-4. Click `Run workflow`.
-5. Leave the defaults for AppTesters, or provide another Egern YAML URL.
-6. Use `shadowrocket.conf` or `module.sgmodule` from the repository root, or download the `converted-egern-configs` artifact after the run completes.
 
 ## Supported Egern Sections
 
