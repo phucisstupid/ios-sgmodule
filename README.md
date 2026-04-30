@@ -35,8 +35,8 @@ The included workflow can be run manually from the Actions tab.
 
 Inputs:
 
-- `source_url`: Egern YAML URL to convert.
-- `module_name`: display name used in generated config metadata.
+- `source_url`: Egern YAML URL to convert. Defaults to `https://apptesters.org/egern.yaml`.
+- `module_name`: display name used in generated config metadata. Defaults to `AppTesters`.
 
 The workflow uploads the generated Shadowrocket and Surge files as an artifact named `converted-egern-configs`.
 
@@ -53,4 +53,3 @@ Duplicate script names are made unique by appending `_2`, `_3`, and so on.
 ## Notes
 
 Only convert and publish configs you own or are authorized to redistribute. Generated scripts and MITM rules can affect app traffic and should be reviewed before use.
-

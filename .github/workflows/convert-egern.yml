@@ -5,12 +5,13 @@ on:
     inputs:
       source_url:
         description: "Egern YAML URL to convert"
-        required: true
+        required: false
+        default: "https://apptesters.org/egern.yaml"
         type: string
       module_name:
         description: "Display name for generated configs"
         required: false
-        default: "Converted Egern"
+        default: "AppTesters"
         type: string
   push:
     paths:
@@ -33,15 +34,11 @@ jobs:
 
       - name: Convert Egern config
         run: |
-          SOURCE_URL="${{ inputs.source_url || 'https://example.com/egern.yaml' }}"
-          if [ "$SOURCE_URL" = "https://example.com/egern.yaml" ]; then
-            echo "Skipping push-trigger sample run. Use workflow_dispatch with a real source_url."
-            exit 0
-          fi
+          SOURCE_URL="${{ inputs.source_url || 'https://apptesters.org/egern.yaml' }}"
 
           node tools/convert-egern.js \
             --url "$SOURCE_URL" \
-            --name "${{ inputs.module_name || 'Converted Egern' }}" \
+            --name "${{ inputs.module_name || 'AppTesters' }}" \
             --shadowrocket-out dist/shadowrocket.conf \
             --surge-out dist/module.sgmodule
 
