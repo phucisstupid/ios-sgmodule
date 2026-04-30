@@ -1,0 +1,67 @@
+name: Convert Egern Config
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_url:
+        description: "Egern YAML URL to convert"
+        required: true
+        type: string
+      module_name:
+        description: "Display name for generated configs"
+        required: false
+        default: "Converted Egern"
+        type: string
+  push:
+    paths:
+      - ".github/workflows/convert-egern.yml"
+      - "tools/convert-egern.js"
+
+permissions:
+  contents: read
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+
+      - name: Convert Egern config
+        run: |
+          SOURCE_URL="${{ inputs.source_url || 'https://example.com/egern.yaml' }}"
+          if [ "$SOURCE_URL" = "https://example.com/egern.yaml" ]; then
+            echo "Skipping push-trigger sample run. Use workflow_dispatch with a real source_url."
+            exit 0
+          fi
+
+          node tools/convert-egern.js \
+            --url "$SOURCE_URL" \
+            --name "${{ inputs.module_name || 'Converted Egern' }}" \
+            --shadowrocket-out dist/shadowrocket.conf \
+            --surge-out dist/module.sgmodule
+
+      - name: Verify generated configs
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          test -s dist/shadowrocket.conf
+          test -s dist/module.sgmodule
+          grep -q '^\[Script\]$' dist/shadowrocket.conf
+          grep -q '^\[MITM\]$' dist/shadowrocket.conf
+          grep -q '^\[Script\]$' dist/module.sgmodule
+          grep -q '^\[MITM\]$' dist/module.sgmodule
+          test "$(grep -c ' = type=http-' dist/shadowrocket.conf)" -gt 0
+          test "$(grep -c ' = type=http-' dist/module.sgmodule)" -gt 0
+
+      - name: Upload generated configs
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: converted-egern-configs
+          path: |
+            dist/shadowrocket.conf
+            dist/module.sgmodule
