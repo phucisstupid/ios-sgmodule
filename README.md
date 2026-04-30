@@ -21,8 +21,8 @@ Run the default AppTesters conversion:
 node tools/convert-egern.js \
   --url https://apptesters.org/egern.yaml \
   --name "AppTesters" \
-  --shadowrocket-out dist/shadowrocket.conf \
-  --surge-out dist/module.sgmodule
+  --shadowrocket-out shadowrocket.conf \
+  --surge-out module.sgmodule
 ```
 
 Convert a local Egern YAML file:
@@ -31,14 +31,14 @@ Convert a local Egern YAML file:
 node tools/convert-egern.js \
   --input ./egern.yaml \
   --name "Example Module" \
-  --shadowrocket-out dist/shadowrocket.conf \
-  --surge-out dist/module.sgmodule
+  --shadowrocket-out shadowrocket.conf \
+  --surge-out module.sgmodule
 ```
 
 Generated files:
 
-- `dist/shadowrocket.conf`: import into Shadowrocket.
-- `dist/module.sgmodule`: import into Surge.
+- `shadowrocket.conf`: import into Shadowrocket.
+- `module.sgmodule`: import into Surge.
 
 ## GitHub Action
 
@@ -49,7 +49,7 @@ Inputs:
 - `source_url`: Egern YAML URL to convert. Defaults to `https://apptesters.org/egern.yaml`.
 - `module_name`: display name used in generated config metadata. Defaults to `AppTesters`.
 
-The workflow uploads the generated Shadowrocket and Surge files as an artifact named `converted-egern-configs`.
+The workflow writes the generated Shadowrocket and Surge files to the project root, commits them back to `main`, and uploads the same files as an artifact named `converted-egern-configs`.
 
 To use it:
 
@@ -58,7 +58,7 @@ To use it:
 3. Select `Convert Egern Config`.
 4. Click `Run workflow`.
 5. Leave the defaults for AppTesters, or provide another Egern YAML URL.
-6. Download the `converted-egern-configs` artifact after the run completes.
+6. Use `shadowrocket.conf` or `module.sgmodule` from the repository root, or download the `converted-egern-configs` artifact after the run completes.
 
 ## Supported Egern Sections
 

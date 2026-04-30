@@ -17,9 +17,10 @@ on:
     paths:
       - ".github/workflows/convert-egern.yml"
       - "tools/convert-egern.js"
+      - "README.md"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   convert:
@@ -39,26 +40,37 @@ jobs:
           node tools/convert-egern.js \
             --url "$SOURCE_URL" \
             --name "${{ inputs.module_name || 'AppTesters' }}" \
-            --shadowrocket-out dist/shadowrocket.conf \
-            --surge-out dist/module.sgmodule
+            --shadowrocket-out shadowrocket.conf \
+            --surge-out module.sgmodule
 
       - name: Verify generated configs
-        if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
-          test -s dist/shadowrocket.conf
-          test -s dist/module.sgmodule
-          grep -q '^\[Script\]$' dist/shadowrocket.conf
-          grep -q '^\[MITM\]$' dist/shadowrocket.conf
-          grep -q '^\[Script\]$' dist/module.sgmodule
-          grep -q '^\[MITM\]$' dist/module.sgmodule
-          test "$(grep -c ' = type=http-' dist/shadowrocket.conf)" -gt 0
-          test "$(grep -c ' = type=http-' dist/module.sgmodule)" -gt 0
+          test -s shadowrocket.conf
+          test -s module.sgmodule
+          grep -q '^\[Script\]$' shadowrocket.conf
+          grep -q '^\[MITM\]$' shadowrocket.conf
+          grep -q '^\[Script\]$' module.sgmodule
+          grep -q '^\[MITM\]$' module.sgmodule
+          test "$(grep -c ' = type=http-' shadowrocket.conf)" -gt 0
+          test "$(grep -c ' = type=http-' module.sgmodule)" -gt 0
+
+      - name: Commit generated configs
+        run: |
+          if git diff --quiet -- shadowrocket.conf module.sgmodule; then
+            echo "No generated config changes."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add shadowrocket.conf module.sgmodule
+          git commit -m "Update generated configs"
+          git push
 
       - name: Upload generated configs
-        if: ${{ github.event_name == 'workflow_dispatch' }}
         uses: actions/upload-artifact@v4
         with:
           name: converted-egern-configs
           path: |
-            dist/shadowrocket.conf
-            dist/module.sgmodule
+            shadowrocket.conf
+            module.sgmodule
