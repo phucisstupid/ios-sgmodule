@@ -50,7 +50,22 @@ async function readSource(args) {
     throw new Error("Provide --url <https://...> or --input <file>");
   }
 
-  const response = await fetch(args.sourceUrl, {
+  const urls = [args.sourceUrl, `https://r.jina.ai/http://r.jina.ai/http://${args.sourceUrl}`];
+  const errors = [];
+
+  for (const url of urls) {
+    try {
+      return await fetchText(url);
+    } catch (error) {
+      errors.push(`${url}: ${error.message}`);
+    }
+  }
+
+  throw new Error(`Failed to fetch source config:\n${errors.join("\n")}`);
+}
+
+async function fetchText(url) {
+  const response = await fetch(url, {
     headers: {
       "User-Agent": "Mozilla/5.0 (compatible; ios-sgmodule/1.0; +https://github.com/phucisstupid/ios-sgmodule)",
       "Accept": "text/yaml,text/plain,application/yaml,application/x-yaml,*/*",
@@ -65,12 +80,12 @@ async function readSource(args) {
           "-fsSL",
           "-A",
           "Mozilla/5.0 (compatible; ios-sgmodule/1.0; +https://github.com/phucisstupid/ios-sgmodule)",
-          args.sourceUrl,
+          url,
         ],
         { encoding: "utf8", maxBuffer: 20 * 1024 * 1024 }
       );
     } catch (error) {
-      throw new Error(`Failed to fetch ${args.sourceUrl}: ${response.status} ${response.statusText}`);
+      throw new Error(`${response.status} ${response.statusText}`);
     }
   }
   return response.text();

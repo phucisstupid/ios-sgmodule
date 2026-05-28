@@ -36,8 +36,6 @@ jobs:
         uses: actions/setup-node@v6
 
       - name: Convert Egern config
-        id: convert
-        continue-on-error: true
         run: |
           SOURCE_URL="${{ inputs.source_url || 'https://apptesters.org/egern.yaml' }}"
 
@@ -46,11 +44,6 @@ jobs:
             --name "${{ inputs.module_name || 'AppTesters' }}" \
             --shadowrocket-out shadowrocket.conf \
             --surge-out module.sgmodule
-
-      - name: Keep current configs when upstream blocks GitHub
-        if: ${{ steps.convert.outcome == 'failure' }}
-        run: |
-          echo "::warning::Unable to fetch upstream config. Keeping the currently committed root config files."
 
       - name: Verify generated configs
         run: |

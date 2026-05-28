@@ -47,7 +47,7 @@ Generated files:
 
 The workflow runs daily and can also be started manually from the Actions tab. It writes `shadowrocket.conf` and `module.sgmodule` directly to the project root, then commits them back to `main` when the generated content changes.
 
-If `https://apptesters.org/egern.yaml` blocks GitHub Actions with `403 Forbidden`, the workflow keeps the currently committed root files instead of failing the run.
+The converter first fetches the AppTesters URL directly. If the upstream blocks GitHub Actions with `403 Forbidden`, it retries through Jina Reader so the workflow can still refresh the generated files.
 
 ## Supported Egern Sections
 
