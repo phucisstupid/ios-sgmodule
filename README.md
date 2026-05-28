@@ -43,6 +43,12 @@ Generated files:
 - `shadowrocket.conf`: import into Shadowrocket.
 - `module.sgmodule`: import into Surge.
 
+## GitHub Action
+
+The workflow runs daily and can also be started manually from the Actions tab. It writes `shadowrocket.conf` and `module.sgmodule` directly to the project root, then commits them back to `main` when the generated content changes.
+
+If `https://apptesters.org/egern.yaml` blocks GitHub Actions with `403 Forbidden`, the workflow keeps the currently committed root files instead of failing the run.
+
 ## Supported Egern Sections
 
 The converter currently handles the Egern fields used by AppTesters-style scripting modules:
